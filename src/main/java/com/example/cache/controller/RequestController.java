@@ -19,6 +19,13 @@ public class RequestController {
         if(map.containsKey(key)) return map.get(key);
         return null;
     }
+
+    @PostMapping("/add")
+    public HashMap<String, Integer> add(@RequestParam int n1, @RequestParam int n2){
+        HashMap<String, Integer> m = new HashMap<>();
+        m.put("sum", n1+n2);
+        return m;
+    }
 }
 
 class KeyValuePair{
