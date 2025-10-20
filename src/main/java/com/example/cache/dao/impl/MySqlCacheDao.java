@@ -21,8 +21,9 @@ public class MySqlCacheDao implements CacheDao {
     public void put(String key, String value) {
         jdbcTemplate.update(
                 "INSERT INTO cache (cache_key, cache_value) VALUES (?, ?) " +
-                        "ON DUPLICATE KEY UPDATE cache_value = VALUES(cache_value)",
+                        "ON DUPLICATE KEY UPDATE cache_value = ?",
                 key,
+                value,
                 value
         );
     }
