@@ -12,7 +12,7 @@ import java.util.Map;
 @Profile("!dynamodb")
 public class HashMapCacheDao implements CacheDao {
 
-    private Map<String, String> map = new HashMap<>();
+    private final Map<String, String> map = new HashMap<>();
 
     @Override
     public void put(String key, String value) {
@@ -21,7 +21,9 @@ public class HashMapCacheDao implements CacheDao {
 
     @Override
     public String get(String key) throws KeyNotFoundException {
-        if(map.containsKey(key)) return map.get(key);
+        if (map.containsKey(key)) {
+            return map.get(key);
+        }
         throw new KeyNotFoundException(key);
     }
 }
