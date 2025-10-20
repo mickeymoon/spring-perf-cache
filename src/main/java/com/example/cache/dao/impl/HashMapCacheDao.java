@@ -2,13 +2,14 @@ package com.example.cache.dao.impl;
 
 import com.example.cache.dao.CacheDao;
 import com.example.cache.exception.KeyNotFoundException;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * In-memory implementation retained for reference/testing.
- */
+@Component
+@Profile("!dynamodb")
 public class HashMapCacheDao implements CacheDao {
 
     private final Map<String, String> map = new HashMap<>();
