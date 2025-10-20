@@ -3,7 +3,6 @@ package com.example.cache.controller;
 import java.util.Map;
 
 import com.example.cache.dao.CacheDao;
-import com.example.cache.dao.impl.HashMapCacheDao;
 import com.example.cache.dto.KeyValuePair;
 import com.example.cache.exception.KeyNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
