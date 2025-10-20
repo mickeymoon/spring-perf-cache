@@ -1,37 +1,42 @@
 package com.example.cache.dao.impl;
 
 import com.example.cache.dao.CacheDao;
-import com.example.cache.entity.CacheEntry;
 import com.example.cache.exception.KeyNotFoundException;
-import com.example.cache.repository.CacheRepository;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
 @Primary
 public class MySqlCacheDao implements CacheDao {
 
-    private final CacheRepository cacheRepository;
+    private final JdbcTemplate jdbcTemplate;
 
-    public MySqlCacheDao(CacheRepository cacheRepository) {
-        this.cacheRepository = cacheRepository;
+    public MySqlCacheDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
     public void put(String key, String value) {
-        CacheEntry entry = cacheRepository.findById(key)
-                .map(existing -> {
-                    existing.setValue(value);
-                    return existing;
-                })
-                .orElseGet(() -> new CacheEntry(key, value));
-        cacheRepository.save(entry);
+        jdbcTemplate.update(
+                "INSERT INTO cache (cache_key, cache_value) VALUES (?, ?) " +
+                        "ON DUPLICATE KEY UPDATE cache_value = VALUES(cache_value)",
+                key,
+                value
+        );
     }
 
     @Override
     public String get(String key) throws KeyNotFoundException {
-        return cacheRepository.findById(key)
-                .map(CacheEntry::getValue)
-                .orElseThrow(() -> new KeyNotFoundException(key));
+        try {
+            return jdbcTemplate.queryForObject(
+                    "SELECT cache_value FROM cache WHERE cache_key = ?",
+                    String.class,
+                    key
+            );
+        } catch (EmptyResultDataAccessException ex) {
+            throw new KeyNotFoundException(key);
+        }
     }
 }
